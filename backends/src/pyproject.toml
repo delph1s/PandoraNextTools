@@ -1,0 +1,60 @@
+[tool.poetry]
+name = "PandoraNextTools"
+version = "0.1.0"
+description = "Use PandoraNext Easier"
+authors = ["delph1s <admin@delph1s.com>"]
+maintainers = ["delph1s <admin@delph1s.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{ include = "pnts", from = "src" }]
+include = [{ path = "tests", format = "sdist" }]
+homepage = "https://github.com/delph1s/PandoraNextTools"
+repository = "https://github.com/delph1s/PandoraNextTools"
+documentation = "https://github.com/delph1s/PandoraNextTools/docs"
+keywords = ["pandora-next", "chatgpt", "tools"]
+classifiers = [
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+
+[tool.poetry.urls]
+Changelog = "https://github.com/delph1s/PandoraNextTools/CHANGELOG.md"
+
+[[tool.poetry.source]]
+name = "tuna"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+priority = "default"
+
+[[tool.poetry.source]]
+name = "aliyun"
+url = "https://mirrors.aliyun.com/pypi/simple/"
+priority = "primary"
+
+[[tool.poetry.source]]
+name = "official"
+url = "https://pypi.org/simple"
+priority = "supplemental"
+
+[[tool.poetry.source]]
+name = "private"
+url = "https://mirrors.qq.com/repository/pypi/simple/"
+priority = "explicit"
+
+
+[tool.poetry.dependencies]
+python = "^3.10"
+click = { version = "^8.1.7", source = "tuna" }
+httpx = { version = "^0.24.1", source = "tuna" }
+
+[tool.poetry.group.dev.dependencies]
+mkdocs = { version = "^1.5.3", source = "tuna" }
+mkdocs-material = { extras = ["imaging"], version = "^9.5.2", source = "tuna" }
+
+[tool.poetry.scripts]
+pnts = "pnts.cmdline:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,203 @@
+{
+  "package": {
+    "productName": "pnts",
+    "version": "0.0.1"
+  },
+  "tauri": {
+    "windows": [
+      {
+        "label": "main",
+        "userAgent": "PNTS Webview2",
+        "fileDropEnabled": false,
+        "center": true,
+        "x": null,
+        "y": null,
+        "width": 1920,
+        "height": 1080,
+        "minWidth": 1920,
+        "minHeight": 1080,
+        "maxWidth": 3840,
+        "maxHeight": 2160,
+        "resizable": true,
+        "title": "pnts",
+        "fullscreen": false,
+        "focus": true,
+        "transparent": true,
+        "maximized": false,
+        "visible": true,
+        "decorations": true,
+        "alwaysOnTop": false,
+        "contentProtected": true,
+        "skipTaskbar": false,
+        "titleBarStyle": "Visible",
+        "hiddenTitle": true,
+        "acceptFirstMouse": false,
+        "tabbingIdentifier": null,
+        "additionalBrowserArgs": null
+      }
+    ],
+    "cli": {
+      "description": "Use PandoraNext Easier",
+      "longDescription": "Tools Help Use PandoraNext Easier",
+      "beforeHelp": "Plug and play",
+      "afterHelp": "Plug and play",
+      "args": null,
+      "subcommands": null
+    },
+    "bundle": {
+      "active": true,
+      "targets": [
+        "dmg",
+        "nsis"
+      ],
+      "identifier": "com.delph1s.dev",
+      "publisher": "com.delph1s.dev",
+      "icon": [
+        "icons/32x32.png",
+        "icons/128x128.png",
+        "icons/128x128@2x.png",
+        "icons/icon.icns",
+        "icons/icon.ico"
+      ],
+      "resources": [],
+      "copyright": "Copyright © 2013-2023 delph1s ALL rights reserved.",
+      "category": "Utility",
+      "shortDescription": "Use PandoraNext Easier",
+      "longDescription": "Tools Help Use PandoraNext Easier",
+      "appimage": {
+        "bundleMediaFramework": false
+      },
+      "deb": {
+        "depends": [],
+        "files": {}
+      },
+      "macOS": {
+        "frameworks": [],
+        "minimumSystemVersion": "11.0",
+        "exceptionDomain": "delph1s.com",
+        "license": null,
+        "signingIdentity": null,
+        "providerShortName": "delph1s",
+        "entitlements": null
+      },
+      "externalBin": [],
+      "windows": {
+        "digestAlgorithm": "sha256",
+        "certificateThumbprint": null,
+        "timestampUrl": null,
+        "tsp": false,
+        "webviewInstallMode": {
+          "type": "downloadBootstrapper"
+        },
+        "allowDowngrades": true,
+        "wix": {
+          "language": [
+            "zh-CN",
+            "en-US"
+          ],
+          "template": null,
+          "fragmentPaths": [],
+          "componentGroupRefs": [],
+          "componentRefs": [],
+          "featureGroupRefs": [],
+          "featureRefs": [],
+          "mergeRefs": [],
+          "license": null,
+          "enableElevatedUpdateTask": false,
+          "bannerPath": null,
+          "dialogImagePath": null
+        },
+        "nsis": {
+          "license": null,
+          "headerImage": null,
+          "sidebarImage": null,
+          "installerIcon": "icons/icon.ico",
+          "installMode": "both",
+          "languages": [
+            "English",
+            "SimpChinese",
+            "TradChinese"
+          ],
+          "displayLanguageSelector": true
+        }
+      }
+    },
+    "allowlist": {
+      "all": false,
+      "fs": {
+        "all": true
+      },
+      "window": {
+        "all": true
+      },
+      "shell": {
+        "all": true
+      },
+      "dialog": {
+        "all": true
+      },
+      "http": {
+        "scope": [
+          "http://**",
+          "https://**"
+        ],
+        "all": true,
+        "request": true
+      },
+      "notification": {
+        "all": true
+      },
+      "globalShortcut": {
+        "all": true
+      },
+      "os": {
+        "all": true
+      },
+      "path": {
+        "all": true
+      },
+      "protocol": {
+        "all": true
+      },
+      "process": {
+        "all": true
+      },
+      "clipboard": {
+        "all": true
+      },
+      "app": {
+        "all": true
+      }
+    },
+    "security": {
+      "csp": null
+    },
+    "updater": {
+      "active": false,
+      "dialog": true,
+      "endpoints": [],
+      "pubkey": "",
+      "windows": {
+        "installerArgs": [],
+        "installMode": "basicUi"
+      }
+    },
+    "systemTray": {
+      "iconPath": "icons/icon-tray-light.png",
+      "iconAsTemplate": true,
+      "menuOnLeftClick": true
+    },
+    "macOSPrivateApi": true
+  },
+  "build": {
+    "runner": null,
+    "devPath": "http://localhost:8888",
+    "distDir": "../release/next/export",
+    "beforeDevCommand": "npm run next:dev",
+    "beforeBuildCommand": "npm run next:build",
+    "beforeBundleCommand": null,
+    "features": [],
+    "withGlobalTauri": true
+  },
+  "plugins": {}
+}

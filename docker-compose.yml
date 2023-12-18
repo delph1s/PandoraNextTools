@@ -1,0 +1,85 @@
+version: "3.9"
+
+secrets:
+  db-password:
+    file: ./docker_conf/db/db_password.txt
+
+services:
+#  db:
+#    image: postgres:16.1-alpine
+#    container_name: pnts-db
+#    # command: ["-c", "config_file=/etc/postgresql/postgresql.conf"]
+#    env_file:
+#      - ./docker_conf/db/.env
+#    secrets:
+#      - db-password
+#    networks:
+#      - pnts
+#    ports:
+#      - "8887:5432"
+#    volumes:
+#      - /etc/localtime:/etc/localtime:ro
+#      - ./mnt/db/data:/var/lib/postgresql/data:rw
+#      # - ./mnt/db/conf/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+#    restart: unless-stopped
+
+#  cache:
+#    image: redis:7.2-alpine
+#    container_name: pnts-cache
+#    command: ["redis-server", "/etc/redis/redis.conf"]
+#    env_file:
+#      - ./docker_conf/cache/.env
+#    networks:
+#      - pnts
+#    ports:
+#      - "8889:8889"
+#    volumes:
+#      - /etc/localtime:/etc/localtime:ro
+#      - ./mnt/cache/data:/data:rw
+#      - ./mnt/cache/conf/redis.conf:/etc/redis/redis.conf
+#      - ./mnt/cache/conf/users.acl:/etc/redis/users.acl
+#    restart: unless-stopped
+
+  api:
+    image: delph1s/pnts:v2023.0.1
+    container_name: pnts-api
+    build:
+      context: ./backends
+      dockerfile: application.dockerfile
+    env_file:
+      - ./docker_conf/cache/.env
+    networks:
+      - pnts
+    ports:
+      - "8888:8888"
+#    depends_on:
+#      - db
+#      - cache
+    restart: unless-stopped
+    healthcheck:
+      test: curl --fail http://localhost:8888 || exit 1
+      interval: 10s
+      timeout: 10s
+      start_period: 10s
+      retries: 3
+
+#  celery:
+#    container_name: pnts-celery
+#    build:
+#      context: ./backends
+#      dockerfile: celery.dockerfile
+#    env_file:
+#      - ./docker_conf/celery/.env
+#    networks:
+#      - pnts
+#    # ports:
+#    #   - "8886:8886"
+#    # depends_on:
+#    #   - db
+#    #   - cache
+#    restart: unless-stopped
+
+networks:
+  pnts:
+    name: pnts
+    driver: bridge

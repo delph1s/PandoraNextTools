@@ -1,8 +1,7 @@
 ### Project
 # secrets
-docker_conf/db/db_password.txt
-docker_conf/cache/cache_password.txt
-docker_conf/**/.env
+envs/cache/cache_password.txt
+envs/db/db_password.txt
 mnt/api/conf/api.toml
 mnt/cache/conf/redis.conf
 mnt/cache/conf/users.acl
