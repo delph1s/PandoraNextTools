@@ -1,5 +1,5 @@
 """
 module description:
 
-core module
+PandoraNext managers module
 """
