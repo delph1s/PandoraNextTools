@@ -1,4 +1,4 @@
-import { MetadataRoute } from 'next'
+import { MetadataRoute } from 'next';
 
 const robots = (): MetadataRoute.Robots => {
   return {
@@ -7,7 +7,7 @@ const robots = (): MetadataRoute.Robots => {
       disallow: '*',
     },
     sitemap: 'https://acme.com/sitemap.xml',
-  }
-}
+  };
+};
 
 export default robots;
