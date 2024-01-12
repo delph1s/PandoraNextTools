@@ -17,6 +17,10 @@ class UserDictType(TypedDict):
     password: str
 
 
+class RefreshUserDictType(UserDictType):
+    mfa_code: str
+
+
 # 定义一个列表类型别名，其中每个元素都是 UserDictType 类型的字典
 UserListType = list[UserDictType]
 
@@ -87,6 +91,25 @@ def format_timestamp(timestamp: float, fmt="%Y-%m-%d %H:%M:%S") -> str:
     formatted_date = dt_object.strftime(format=fmt)
 
     return formatted_date
+
+
+def set_cookie2header(headers: dict, cookie: str | dict) -> dict:
+    """
+    将 cookie 插入 headers
+
+    :param headers: dict - headers
+    :param cookie: str | dict - cookie
+    :return: dict - new headers
+    """
+
+    # 处理并在请求标头中添加 cookie
+    if cookie is not None:
+        if isinstance(cookie, str):
+            headers["Cookie"] = cookie
+        if isinstance(cookie, dict):
+            headers["Cookie"] = trans_dict2str(cookie)
+
+    return headers
 
 
 def trans_dict2str(cookies: dict) -> str:
@@ -162,6 +185,7 @@ async def fetch(url: str, data: dict | str, headers: dict) -> dict | str:
 def get_access_token(
     url: str,
     account: UserDictType,
+    headers: dict | None = None,
     cookies: str | dict | None = None,
     route: str = "/api/auth/login",
 ) -> dict:
@@ -170,19 +194,47 @@ def get_access_token(
 
     :param url: str - api 地址（包含 domain 和 proxy_prefix）
     :param account: UserDictType - 账号信息
-    :param cookies: str | dict | None - cookies
+    :param headers: dict | None - headers
+    :param cookies: dict | None - cookies
     :param route: str - 路由
     :return: dict - access token
     """
 
-    # 构建请求头
-    headers = {}
-    # 处理并在请求标头中添加 cookie
-    if cookies is not None:
-        if isinstance(cookies, str):
-            headers["Cookie"] = cookies
-        if isinstance(cookies, dict):
-            headers["Cookie"] = trans_dict2str(cookies)
+    headers = set_cookie2header(
+        {"Content-Type": "application/x-www-form-urlencoded"}
+        if headers is None
+        else headers,
+        cookies,
+    )
+
+    res = asyncio.run(fetch(url=url + route, data=account, headers=headers))
+    return res
+
+
+def get_refresh_token(
+    url: str,
+    account: RefreshUserDictType,
+    headers: dict | None = None,
+    cookies: str | dict | None = None,
+    route: str = "/api/auth/login2",
+) -> dict:
+    """
+    获取 access token
+
+    :param url: str - api 地址（包含 domain 和 proxy_prefix）
+    :param account: UserDictType - 账号信息
+    :param headers: dict | None - headers
+    :param cookies: dict | None - cookies
+    :param route: str - 路由
+    :return: dict - access token
+    """
+
+    headers = set_cookie2header(
+        {"Content-Type": "application/x-www-form-urlencoded"}
+        if headers is None
+        else headers,
+        cookies,
+    )
 
     res = asyncio.run(fetch(url=url + route, data=account, headers=headers))
     return res
@@ -191,7 +243,8 @@ def get_access_token(
 def get_share_token(
     url: str,
     access_token: str,
-    cookies: str | dict | None = None,
+    headers: dict | None = None,
+    cookies: dict | None = None,
     route: str = "/api/token/register",
     site_limit: str = "",
     expires_in: float = 0,
@@ -203,7 +256,8 @@ def get_share_token(
 
     :param url: str - api 地址（包含 domain 和 proxy_prefix）
     :param access_token: str - ak
-    :param cookies: str | dict | None - cookies
+    :param headers: dict | None - headers
+    :param cookies: dict | None - cookies
     :param route: str - 路由
     :param site_limit: str - 限制的网站
     :param expires_in: float - 过期时间
@@ -212,14 +266,12 @@ def get_share_token(
     :return: dict - share token
     """
 
-    # 构建请求头
-    headers = {}
-    # 处理并在请求标头中添加 cookie
-    if cookies is not None:
-        if isinstance(cookies, str):
-            headers["Cookie"] = cookies
-        if isinstance(cookies, dict):
-            headers["Cookie"] = trans_dict2str(cookies)
+    headers = set_cookie2header(
+        {"Content-Type": "application/x-www-form-urlencoded"}
+        if headers is None
+        else headers,
+        cookies,
+    )
 
     # 为 "unique_name "生成随机字符串
     rand_str = "".join(random.choices(ascii_letters_and_digits, k=8))
@@ -240,22 +292,65 @@ def get_pool_token(
     url: str,
     token_list: list[str],
     pool_token: str = "",
-    cookies: str | dict | None = None,
+    headers: dict | None = None,
+    cookies: dict | None = None,
     route: str = "/api/pool/update",
 ) -> dict:
+    """
+    获取 pool token
 
-    # 构建请求头
-    headers = {}
-    # 处理并在请求标头中添加 cookie
-    if cookies is not None:
-        if isinstance(cookies, str):
-            headers["Cookie"] = cookies
-        if isinstance(cookies, dict):
-            headers["Cookie"] = trans_dict2str(cookies)
+    :param url: str - api 地址（包含 domain 和 proxy_prefix）
+    :param token_list: list[str] - share token 列表
+    :param pool_token: str - 已有 pool token 或留空新建
+    :param headers: dict | None - headers
+    :param cookies: dict | None - cookies
+    :param route: str - 路由
+    :return:
+    """
+
+    headers = set_cookie2header(
+        {"Content-Type": "application/x-www-form-urlencoded"}
+        if headers is None
+        else headers,
+        cookies,
+    )
 
     # 获取登录参数列表
-    sk_str = '\n'.join(token_list)
+    sk_str = "\n".join(token_list)
     data = f"share_tokens={sk_str}&&pool_token={pool_token}"
+
+    res = asyncio.run(fetch(url=url + route, data=data, headers=headers))
+    return res
+
+
+def auth_by_session(
+    url: str,
+    session_token: str,
+    headers: dict | None = None,
+    cookies: dict | None = None,
+    route: str = "/api/auth/session",
+) -> dict:
+    """
+    通过 session token 刷新
+
+    :param url: str - api 地址（包含 domain 和 proxy_prefix）
+    :param session_token: str - session token
+    :param headers: dict | None - headers
+    :param cookies: dict | None - cookies
+    :param route: str - 路由
+    :return: dict - new access token
+    """
+
+    headers = set_cookie2header(
+        {"Content-Type": "application/x-www-form-urlencoded"}
+        if headers is None
+        else headers,
+        cookies,
+    )
+
+    data = {
+        "session_token": session_token,
+    }
 
     res = asyncio.run(fetch(url=url + route, data=data, headers=headers))
     return res

@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     'rest_framework',  # RESTful 风格
     # 自定义app
     'apps.core.apps.CoreConfig',  # 核心 app
-    'apps.tbar.apps.PNMConfig',  # pnm app
+    'apps.permission.apps.PermissionConfig',  # permission app
+    'apps.pnm.apps.PNMConfig',  # pnm app
 ]
 
 MIDDLEWARE = [
@@ -96,6 +97,11 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+
+
+# 登录方式配置
+
+AUTH_USER_MODEL = 'permission.User'
 
 
 # Password validation
@@ -179,7 +185,13 @@ REST_FRAMEWORK = {
     # 'DEFAULT_THROTTLE_CLASSES': 'apps.core.throttling.RateThrottle',  # 截断器
     # 'DEFAULT_THROTTLE_RATE': {'visit_rate': '5/m'},  # 访问频率
     'DEFAULT_RENDERER_CLASSES': [
+        'djangorestframework_camel_case.render.CamelCaseJSONRenderer',
         'rest_framework.renderers.JSONRenderer',
+    ],
+    'DEFAULT_PARSER_CLASSES': [
+        'djangorestframework_camel_case.parser.CamelCaseFormParser',
+        'djangorestframework_camel_case.parser.CamelCaseMultiPartParser',
+        'djangorestframework_camel_case.parser.CamelCaseJSONParser',
     ],
     # 'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
     # 'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -214,3 +226,101 @@ CORS_ALLOW_METHODS = (
     'PUT',
     'VIEW',
 )
+
+
+# Logging Config
+
+if not (BASE_DIR / 'logs').is_dir():
+    (BASE_DIR / 'logs').mkdir()
+
+LOG_DIR = BASE_DIR / 'logs'
+
+STANDARD_LOG_FORMAT = (
+    '[%(asctime)s][%(name)s.%(funcName)s():%(lineno)d] [%(levelname)s] %(message)s'
+)
+SIMPLE_LOG_FORMAT = '[%(levelname)s][%(asctime)s][%(filename)s:%(lineno)d}]%(message)s'
+DEFAULT_LOG_DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "filters": {
+        "require_debug_false": {"()": "django.utils.log.RequireDebugFalse"},
+        "require_debug_true": {
+            "()": "django.utils.log.RequireDebugTrue",
+        },
+        # "special": {
+        #     "()": "project.logging.SpecialFilter",
+        #     "foo": "bar"
+        # },
+    },
+    "formatters": {  # 定义了两种日志格式
+        'standard': {
+            'format': STANDARD_LOG_FORMAT,
+        },
+        "simple": {  # 简单
+            'format': SIMPLE_LOG_FORMAT,
+        },
+        "default": {"format": STANDARD_LOG_FORMAT, "datefmt": DEFAULT_LOG_DATE_FORMAT},
+    },
+    "handlers": {
+        "mail_admins": {
+            "level": "ERROR",
+            "class": "django.utils.log.AdminEmailHandler",
+            "filters": ["require_debug_false"],
+        },
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "standard",
+            "filters": ["require_debug_true"],
+        },
+        "file": {
+            "level": "INFO",
+            "class": "logging.handlers.RotatingFileHandler",  # 保存到文件，根据文件大小自动切
+            "filename": LOG_DIR / "server.log",  # 日志文件
+            "maxBytes": 1024 * 1024 * 10,  # 日志大小 10M
+            "backupCount": 5,  # 备份数为 5
+            "formatter": "simple",  # 标准格式
+            "encoding": "utf-8",
+            "filters": ["require_debug_false"],
+        },
+    },
+    "root": {"level": "DEBUG", "handlers": ["console"]},
+    "loggers": {
+        "": {
+            "level": "INFO",
+            "handlers": ["console", "file"],
+        },
+        "django": {
+            "level": "INFO",
+            "handlers": ["console", "file"],
+            "propagate": True,
+        },
+        "django.request": {  # Django的request发生error会自动记录
+            "level": "INFO",
+            "handlers": ["console", "file"],
+            "propagate": False,
+        },
+        "django.server": {
+            "level": "INFO",
+            "handlers": ["console", "file"],
+            "propagate": False,
+        },
+        "django.db.backends": {
+            "level": "INFO",
+            "handlers": ["console", "mail_admins"],
+            "propagate": False,
+        },
+        "django.utils.autoreload": {
+            "level": "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
+        "django.security.DisallowedHost": {  # 对于不在 ALLOWED_HOSTS 中的请求不发送报错邮件
+            "level": "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
+    },
+}

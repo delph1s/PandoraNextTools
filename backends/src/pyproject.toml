@@ -47,6 +47,21 @@ priority = "explicit"
 python = "^3.10"
 click = { version = "^8.1.7", source = "tuna" }
 httpx = { version = "^0.24.1", source = "tuna" }
+pandas = { version = "^2.1.4", source = "tuna" }
+django = { version = "^5.0.1", source = "tuna" }
+djangorestframework = { version = "^3.14.0", source = "tuna" }
+djangorestframework-camel-case = { version = "^1.4.2", source = "tuna" }
+django-cleanup = { version = "^8.0.0", source = "tuna" }
+django-comment-migrate = { version = "^0.1.7", source = "tuna" }
+django-filter = { version = "^23.5", source = "tuna" }
+django-ipware = { version = "^6.0.3", source = "tuna" }
+djangorestframework-simplejwt = { version = "^5.3.1", source = "tuna" }
+psutil = { version = "^5.9.7", source = "tuna" }
+psycopg2-binary = { version = "^2.9.9", source = "tuna" }
+rich = { version = "^13.7.0", source = "tuna" }
+uwsgi = { version = "^2.0.23", source = "tuna" }
+paramiko = {version = "^3.4.0", source = "tuna"}
+django-cors-headers = {version = "^4.3.1", source = "tuna"}
 
 [tool.poetry.group.dev.dependencies]
 mkdocs = { version = "^1.5.3", source = "tuna" }

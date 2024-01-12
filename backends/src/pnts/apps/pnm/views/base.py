@@ -2,7 +2,6 @@ import httpx
 import json
 
 from django.conf import settings
-from django.shortcuts import render
 from rest_framework.views import APIView
 
 from apps.core import status
@@ -10,7 +9,6 @@ from apps.core.response import (
     SuccessResponse,
     ErrorResponse,
 )
-from utils.console.core import console
 from utils.ssh.mgr import SSHManager
 
 
